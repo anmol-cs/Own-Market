@@ -1,16 +1,22 @@
 import hashlib
+import random
 
+#global variable
+clientId=[]
 
-Id='aa11'	#user level variable
+#user level variable
 orderCount=1
 
-searchParameter=0	#company level variables
+#company level variables
+searchParameter=0
 buy=0
 sell=0
 bid={}	
 ask={}
 
 class user:
+	def __init__(self):
+		self.generateID()
 	pass
 
 
@@ -20,24 +26,52 @@ def hid(a):	#funct to produce hash
 	return(key.hexdigest())
 
 class userClass:
-	# userId='NA'
-	password='NA'
-	funds=0.0
-	orderHistory={
-	000:{'Product':'',
-		'Price':0.0,
-		'Quantity':0,
-		'date':'00/00/000',
-		'total':0.0,
-		'status':'',
-		'fallback':'',
-		'universalCode':''
-		}
-	}
-class orderClass:	#general order class
 	def __init__(self):
+		
+		# userId='NA'
+		self.generateID()
+		self.password='NA'
+		self.funds=0.0
+		self.orderHistory={
+			#FORMAT FOR OREDER HISTORY
+			# 000:{'Product':'',
+			# 	'Price':0.0,
+			# 	'Quantity':0,
+			# 	'date':'00/00/000',
+			# 	'total':0.0,
+			# 	'status':'',
+			# 	'fallback':'',
+			# 	'universalCode':''
+			# 	}
+		}
+
+		def accountSetup(self):
+			self.name=input("Enter your full name: ")
+			self.userEmail=input("Enter your Email address: ")
+			self.userPassword=passCheck()
+			self.userName=generateId()
+
+		def generateId(self):
+			tmp=self.name[0:2]+str(random.randrange(10,100))
+			self.userName=tmp if tmp not in clientId else generateId()
+			return self.userName
+
+
+		def passCheck(self):
+			self.userPassword=input("Chose and enter your password: ")
+			verify=input("Re-enter your password: ")
+			if(verify==self.userPassword):
+				return self.userPassword
+			else:
+				print("Passwords don't match!! Try again.")
+				passCheck()
+				
+
+
+class orderClass:	#general order class
+	def __init__(self,id):
 		global Id,orderCount 	#REMOVE
-		self.userId=Id 	#change temperory....... User id used for login
+		self.userId=id 	#change temperory....... User id used for login
 		self.pri=0		#price for each unit for buy/sell
 		self.typ=''		#type of order (buy/sell)
 		self.qnt=0		#quantity to be purchased/sold
@@ -57,8 +91,9 @@ class orderClass:	#general order class
 						tmp[self.pri].remove(i)											#Removing the order from order list
 						if(self.status=='Modified'):										#Conditional to re-insert modified order 
 							self.orderMatching(tmp,tmp1)	
-						if tmp[self.pri]==[]: tmp.pop(self.pri)							#Remove empty list
-						break;
+						if tmp[self.pri]==[]: 
+							tmp.pop(self.pri)							#Remove empty list
+							break
 		else:
 			self.orderMatching(tmp,tmp1)
 
@@ -75,7 +110,7 @@ class orderClass:	#general order class
 					zero.status='Partial Complete '+str(zero.qnt-zero.cmpt)+' unit/s still left'
 					self.transactionCodes.append(zero.universalCode)
 					zero.transactionCodes.append(self.universalCode)
-					break;
+					break
 					#not removed obj frm list here because it has not been inserted into the list
 
 				elif (zero.qnt-zero.cmpt)<(self.qnt-self.cmpt):
@@ -96,8 +131,9 @@ class orderClass:	#general order class
 					self.transactionCodes.append(zero.universalCode)
 					zero.transactionCodes.append(self.universalCode)
 					tmp1[self.pri].remove(zero)
-					if tmp1[self.pri]==[]: tmp1.pop(self.pri)
-					break
+					if tmp1[self.pri]==[]: 
+						tmp1.pop(self.pri)
+						break
 
 		if self.cmpt<self.qnt:
 			if self.pri in tmp:
@@ -122,10 +158,9 @@ class orderClass:	#general order class
 
 
 
-def tr():	#timepass function to take user input the format is "order type" "quantity" "price"
+def testFunc():	#timepass function to take user input the format is "order type" "quantity" "price"
 	test=[['B',12,13],['B',5,12],['B',4,12],['S',12,13],['S',13,12]]
-	# print('Enter type(B/S), qnt, price: ')
-	# obj.typ,obj.qnt,obj.pri=input().split()
+	
 	obj=[orderClass() for i in range(len(test))]
 	a=0
 	for i in obj:
@@ -135,9 +170,7 @@ def tr():	#timepass function to take user input the format is "order type" "quan
 		# print(i.universalCode)     #del
 		i.order()
 		a+=1
-	# print(obj[4].cmpt)
-	# print(ask)
-	# print(bid)
+
 	obj[4].status='Modified'
 	obj[4].qnt=5
 	obj[4].cmpt=0
@@ -146,18 +179,6 @@ def tr():	#timepass function to take user input the format is "order type" "quan
 	print(obj)
 
 if __name__=="__main__":
-	# for i in range(5):
-	tr()
-
-	for i in bid:
-		print(bid[i][0].status)
-		print(bid[i][0].cmpt)
-		print(bid[i][0].qnt)
-		print(bid[i][0].pri)
-	for i in ask:
-		print(ask[i][0].status)
-		print(ask[i][0].cmpt)
-		print(ask[i][0].qnt)
-		print(ask[i][0].pri)
+	testFunc()
 	print(bid)	#REMOVE
 	print(ask)
